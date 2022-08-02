@@ -1,4 +1,5 @@
-// 카카오톡 게임별의 하반기 신규 서비스로 다트 게임을 출시하기로 했다. 다트 게임은 다트판에 다트를 세 차례 던져 그 점수의 합계로 실력을 겨루는 게임으로, 모두가 간단히 즐길 수 있다.
+// 카카오톡 게임별의 하반기 신규 서비스로 다트 게임을 출시하기로 했다. 
+// 다트 게임은 다트판에 다트를 세 차례 던져 그 점수의 합계로 실력을 겨루는 게임으로, 모두가 간단히 즐길 수 있다.
 // 갓 입사한 무지는 코딩 실력을 인정받아 게임의 핵심 부분인 점수 계산 로직을 맡게 되었다. 다트 게임의 점수 계산 로직은 아래와 같다.
 
 // 다트 게임은 총 3번의 기회로 구성된다.
@@ -32,3 +33,38 @@
 // 5	1D#2S*3S	5	    1^2 * (-1) * 2 + 2^1 * 2 + 3^1
 // 6	1T2D3D#	    -4	    1^3 + 2^2 + 3^2 * (-1)
 // 7	1D2S3T*	    59	    1^2 + 2^1 * 2 + 3^3 * 2
+
+
+const data = ["1S2D*3T","1D2S#10S","1D2S0T","1S*2T*3S","1D#2S*3S","1T2D3D#","1D2S3T*"];
+const dartResult = data[1].split('');
+const answer = [];
+var score = 0;
+var temp = 0;
+
+for (var i=0; i<dartResult.length; i++){
+    if(dartResult[i] >= 0 && dartResult[i] <= 9){
+        if (dartResult[i] == 1 && dartResult[i+1] == 0){
+            temp = 10;
+            i++;
+        }else{
+            temp = dartResult[i];
+        }
+    }else if (dartResult[i] == "S"){
+        answer.push(temp);
+    }else if (dartResult[i] == "D"){
+        answer.push(Math.pow(temp,2));
+    }else if (dartResult[i] == "T"){
+        answer.push(Math.pow(temp,3));
+    }else if (dartResult[i] == "#"){
+        answer[answer.length-1] *= -1;
+    }else if (dartResult[i] == "*"){
+        answer[answer.length-1] *= 2;
+        answer[answer.length-2] *= 2;
+    }
+}
+    
+for (var j=0; j<answer.length; j++){
+    score += Number(answer[j]);
+}
+
+console.log(score);
