@@ -46,3 +46,51 @@
 // handshake	shake hands	65536
 // aa1+aa2	AAAA12	43690
 // E=M*C^2	e=m*c^2	65536
+
+const str1 = "aa1+aa2";
+const str2 = "AAAA12";
+
+// 대소문자 구분이 없으므로, 미리 소문자로 변환한다.
+const s1 = str1.toLowerCase();
+const s2 = str2.toLowerCase();
+
+// 영어 소문자만 검출하는 정규식
+var eng = /[a-z]/g;
+
+// 두글자씩 쪼개서 담는다. 이때, a+등 영문자가 아닌 문자가 포함된 글자쌍은 제외한다.
+const arr1 = [];
+const arr2 = [];
+for(let i =0;i<s1.length-1;i++) {
+    const str = s1[i] + s1[i+1];
+    if(str.replace(eng, '').length == 0) arr1.push(str);
+}
+for(let i =0;i<s2.length-1;i++) {
+    const str = s2[i] + s2[i+1];
+    if(str.replace(eng, '').length == 0) arr2.push(str);
+}
+
+// 비교할 문자열이 없다면 유사도는 1이므로 바로 리턴한다.
+if(arr1.length ==0 && arr2.length==0) return 65536;
+
+// 동일한 배열인 경우에도 유사도가 1이다.
+arr1.sort();
+arr2.sort();
+if(JSON.stringify(arr1) == JSON.stringify(arr2)) return 65536;
+
+// 교집합
+// 주의할 점은 단순 unique 배열이 아니라 중복을 허용하는 배열이므로,
+// 찾은 요소를 제거해주어야 한다.
+const tempArr2 = JSON.parse(JSON.stringify(arr2));
+const intersection = arr1.reduce((acc,cur)=> {
+    if(tempArr2.includes(cur)) {
+        const index2 = tempArr2.indexOf(cur);
+        tempArr2.splice(index2, 1);
+        return [...acc, cur];
+    } else {
+        return acc;
+    }
+},[]);
+
+// 합집합의 원소 갯수만 구하면 되므로, 집합1과 집합2의 갯수에서 교집합의 수만 빼면 된다.
+const union = arr1.length + arr2.length - intersection.length;
+return Math.floor(intersection.length/union*65536);
